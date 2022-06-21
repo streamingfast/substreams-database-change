@@ -1,6 +1,6 @@
 specVersion: v0.1.0
 package:
-  name: ethereum
+  name: substreams_databases
   version: v0.10.3
   url: https://github.com/streamingfast/substreams-databases
   doc: |

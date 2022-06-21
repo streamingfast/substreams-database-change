@@ -1,6 +1,7 @@
 syntax = "proto3";
 
-package substreams.database.deltas.v1;
+package substreams.databases.deltas.v1;
+option go_package = "github.com/streamingfast/substream-databases/deltas-go;deltas";
 
 message DatabaseChanges {
   repeated TableChange tableChanges = 1;
