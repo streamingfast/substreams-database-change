@@ -1,0 +1,13 @@
+specVersion: v0.1.0
+package:
+  name: ethereum
+  version: v0.10.3
+  url: https://github.com/streamingfast/substreams-databases
+  doc: |
+    Databases protobuf definitions for Substreams modules.
+    This package does not include any modules.
+protobuf:
+  files:
+    - substreams/databases/deltas/v1/models.proto
+  importPaths:
+    - ./proto

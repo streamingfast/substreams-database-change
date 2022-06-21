@@ -1,0 +1,5 @@
+[package]
+name = "substreams-databases"
+version = "0.1.0"
+description = "Substreams databases"
+edition = "2021"
