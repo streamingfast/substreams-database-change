@@ -1,7 +1,6 @@
 syntax = "proto3";
 
-package substreams.databases.deltas.v1;
-option go_package = "github.com/streamingfast/substream-databases/deltas-go;deltas";
+package substreams.database.v1;
 
 message DatabaseChanges {
   repeated TableChange tableChanges = 1;
@@ -10,16 +9,15 @@ message DatabaseChanges {
 message TableChange {
   string table = 1;
   string pk = 2;
-  uint64 block_num = 3;
-  uint64 ordinal = 4;
+  uint64 ordinal = 3;
   enum Operation {
-    UNSET = 0;
+    UNSET = 0;    // Protobuf default should not be used, this is used so that the consume can ensure that the value was actually specified
     CREATE = 1;
     UPDATE = 2;
     DELETE = 3;
   }
-  Operation operation = 5;
-  repeated Field fields = 6;
+  Operation operation = 4;
+  repeated Field fields = 5;
 }
 
 message Field {

@@ -1,13 +1,15 @@
 specVersion: v0.1.0
 package:
-  name: substreams_databases
-  version: v0.10.3
-  url: https://github.com/streamingfast/substreams-databases
+  name: substreams_database_change
+  version: v0.1.0
+  url: https://github.com/streamingfast/substreams-database-change
   doc: |
-    Databases protobuf definitions for Substreams modules.
+    Protobuf definitions for Substreams Database Change modules.
+
     This package does not include any modules.
+
 protobuf:
   files:
-    - substreams/databases/deltas/v1/models.proto
+    - database/v1/database.proto
   importPaths:
     - ./proto
