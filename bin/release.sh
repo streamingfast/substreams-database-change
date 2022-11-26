@@ -72,7 +72,7 @@ main() {
     args="--dry-run --allow-dirty $args"
   fi
 
-  cargo publish $args -p substreams-database
+  cargo publish $args -p substreams-database-change
 }
 
 cleanup_tag() {
