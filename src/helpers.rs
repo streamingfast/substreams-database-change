@@ -1,5 +1,5 @@
 use crate::change::ToField;
-use crate::pb::database::{DatabaseChanges, table_change::Operation, TableChange};
+use crate::pb::database::{table_change::Operation, DatabaseChanges, TableChange};
 
 impl DatabaseChanges {
     pub fn push_change<V: AsRef<str>>(
@@ -16,12 +16,7 @@ impl DatabaseChanges {
 }
 
 impl TableChange {
-    pub fn new<V: AsRef<str>>(
-        entity: V,
-        pk: V,
-        ordinal: u64,
-        operation: Operation,
-    ) -> TableChange {
+    pub fn new<V: AsRef<str>>(entity: V, pk: V, ordinal: u64, operation: Operation) -> TableChange {
         TableChange {
             table: entity.as_ref().to_string(),
             pk: pk.as_ref().to_string(),
