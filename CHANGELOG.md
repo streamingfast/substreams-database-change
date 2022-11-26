@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1](https://github.com/streamingfast/substreams-database-change/releases/tag/v0.1.1)
+
+* Added support for `prost::Timestamp` type.
+
+* Made `AsString` public so you can implement on your own custom types.
+
 ## [0.1.0](https://github.com/streamingfast/substreams-database-change/releases/tag/v0.1.0)
 
 * Added support for `u8`, `u16`, `u32`, `u64`, `i8`, `i16`, `i32`, `i64` types.

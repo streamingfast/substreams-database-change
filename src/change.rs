@@ -12,7 +12,7 @@ pub trait ToField {
 
 /// We require to use a custom trait because we need to customize some of the string
 /// transformation and we need to control the String conversion ourself.
-trait AsString {
+pub trait AsString {
     fn as_string(self) -> String;
 }
 
@@ -42,6 +42,8 @@ impl_as_string_via_to_string!(BigDecimal);
 impl_as_string_via_to_string!(&BigDecimal);
 impl_as_string_via_to_string!(BigInt);
 impl_as_string_via_to_string!(&BigInt);
+impl_as_string_via_to_string!(::prost_types::Timestamp);
+impl_as_string_via_to_string!(&::prost_types::Timestamp);
 
 impl AsString for Vec<u8> {
     fn as_string(self) -> String {
