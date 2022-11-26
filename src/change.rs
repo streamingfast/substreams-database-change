@@ -5,6 +5,7 @@ use substreams::scalar::{BigDecimal, BigInt};
 use substreams::store::{
     DeltaBigDecimal, DeltaBigInt, DeltaBool, DeltaBytes, DeltaInt32, DeltaInt64, DeltaString,
 };
+use substreams::Hex;
 
 pub trait ToField {
     fn to_field<N: AsRef<str>>(self, name: N) -> Field;
@@ -44,6 +45,18 @@ impl_as_string_via_to_string!(BigInt);
 impl_as_string_via_to_string!(&BigInt);
 impl_as_string_via_to_string!(::prost_types::Timestamp);
 impl_as_string_via_to_string!(&::prost_types::Timestamp);
+
+impl<T: AsRef<[u8]>> AsString for Hex<T> {
+    fn as_string(self) -> String {
+        self.to_string()
+    }
+}
+
+impl<T: AsRef<[u8]>> AsString for &Hex<T> {
+    fn as_string(self) -> String {
+        self.to_string()
+    }
+}
 
 impl AsString for Vec<u8> {
     fn as_string(self) -> String {
