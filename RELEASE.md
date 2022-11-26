@@ -4,10 +4,10 @@
 
 > *Important* Do not forget to replace `${version}` by your real version like `0.1.3` in the commands below!
 
-- Clean build dirs `cargo clean`
-- Ensure build `cargo build --release` and tests `cargo test --target aarch64-apple-darwin` (adapt `--target` value to fit your machine's architecture)
 - Ensure you are in a clean and pushed Git state
 - Find & replace all occurrences of Regex `^version = "[^"]+"` in all `Cargo.toml` files to `version = "${version}"`
+- Find & replace all occurrences of Regex `^  version: [^"]+` in all `substreams.yaml` files to `  version: v${version}` (**Spaces are important**)
+- Ensure build `cargo build --release` and tests `cargo test --target aarch64-apple-darwin` (adapt `--target` value to fit your machine's architecture)
 - Update the [CHANGELOG.md](CHANGELOG.md) to update the `## Unreleased` header to become `## [${version}](https://github.com/streamingfast/substreams-database-change/releases/tag/v${version})`
 - Ensure that Keybase is running and you are logged in
 - Ensure that `cargo login` has been done in your terminal
