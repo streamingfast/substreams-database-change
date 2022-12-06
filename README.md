@@ -1,10 +1,8 @@
 # Substreams Database Change
 
-> Developer preview
+> Developer preview, used by database-like Substreams sinks like [substreams-sink-postgres](https://github.com/streamingfast/substreams-sink-postgres) and [substreams-sink-mongodb](https://github.com/streamingfast/substreams-sink-mongodb)
 
-
-`substreams-dataabse` crate contains all the definitions for the database changes which can be emitted by a substream.
-
+`substreams-database` crate contains all the definitions for the database changes which can be emitted by a substream.
 
 ### Install protoc
 

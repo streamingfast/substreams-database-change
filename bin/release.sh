@@ -73,6 +73,10 @@ main() {
   fi
 
   cargo publish $args -p substreams-database-change
+
+  echo ""
+  echo "Don't forge to open https://github.com/streamingfast/substreams-database-change/releases publish the draft"
+  echo "release you just created!"
 }
 
 cleanup_tag() {
