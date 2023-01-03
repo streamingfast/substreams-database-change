@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package substreams.sink.database.v1;
 
+option go_package = "github.com/streamingfast/substreams-database-change/pb;pbdatabase";
+
 message DatabaseChanges {
   repeated TableChange tableChanges = 1;
 }
