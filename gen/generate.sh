@@ -28,7 +28,7 @@ function main() {
   cd "$ROOT" &> /dev/null
 
   echo "Generating proto files"
-  generate "database/v1/database.proto"
+  generate "substreams/sink/database/v1/database.proto"
   echo "Successfully generated proto files"
 
   echo "generate.sh - $(date) - $(whoami)" > "$GEN_FILE"

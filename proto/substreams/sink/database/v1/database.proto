@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package substreams.database.v1;
+package substreams.sink.database.v1;
 
 message DatabaseChanges {
   repeated TableChange tableChanges = 1;
