@@ -5,7 +5,7 @@ package substreams.sink.database.v1;
 option go_package = "github.com/streamingfast/substreams-database-change/pb;pbdatabase";
 
 message DatabaseChanges {
-  repeated TableChange tableChanges = 1;
+  repeated TableChange table_changes = 1;
 }
 
 message TableChange {
