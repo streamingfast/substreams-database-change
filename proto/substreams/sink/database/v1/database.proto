@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package substreams.sink.database.v1;
+package sf.substreams.sink.database.v1;
 
 option go_package = "github.com/streamingfast/substreams-database-change/pb;pbdatabase";
 
