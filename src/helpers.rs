@@ -2,10 +2,10 @@ use crate::change::ToField;
 use crate::pb::database::{table_change::Operation, DatabaseChanges, TableChange};
 
 impl DatabaseChanges {
-    pub fn push_change<V: AsRef<str>>(
+    pub fn push_change<T: AsRef<str>, K: AsRef<str>>(
         &mut self,
-        table: V,
-        pk: V,
+        table: T,
+        pk: K,
         ordinal: u64,
         operation: Operation,
     ) -> &mut TableChange {
@@ -16,7 +16,12 @@ impl DatabaseChanges {
 }
 
 impl TableChange {
-    pub fn new<V: AsRef<str>>(entity: V, pk: V, ordinal: u64, operation: Operation) -> TableChange {
+    pub fn new<T: AsRef<str>, K: AsRef<str>>(
+        entity: T,
+        pk: K,
+        ordinal: u64,
+        operation: Operation,
+    ) -> TableChange {
         TableChange {
             table: entity.as_ref().to_string(),
             pk: pk.as_ref().to_string(),
