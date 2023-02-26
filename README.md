@@ -1,25 +1,51 @@
 # Substreams Database Change
 
-> Developer preview, used by database-like Substreams sinks like [substreams-sink-postgres](https://github.com/streamingfast/substreams-sink-postgres) and [substreams-sink-mongodb](https://github.com/streamingfast/substreams-sink-mongodb)
+[<img alt="github" src="https://img.shields.io/badge/Github-substreams.database-8da0cb?style=for-the-badge&logo=github" height="20">](https://github.com/streamingfast/substreams-database-change)
+[<img alt="crates.io" src="https://img.shields.io/crates/v/substreams-database-change.svg?style=for-the-badge&color=fc8d62&logo=rust" height="20">](https://crates.io/crates/substreams-database-change)
+[<img alt="docs.rs" src="https://img.shields.io/badge/docs.rs-substreams.database-66c2a5?style=for-the-badge&labelColor=555555&logo=docs.rs" height="20">](https://docs.rs/substreams-database-change)
+[<img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/streamingfast/substreams-database-change/ci.yml?branch=develop&style=for-the-badge" height="20">](https://github.com/streamingfast/substreams-database-change/actions?query=branch%3Adevelop)
 
-`substreams-database` crate contains all the definitions for the database changes which can be emitted by a substream.
+> `substreams-database-change` contains all the definitions for database changes which can be emitted by a substream.
 
-### Install protoc
+## Used by
 
-To be able to build proto files manually using the command line, you have to have protoc installed on your machine. Visit [here](https://grpc.io/docs/protoc-installation/) to install.
+- [substreams-sink-postgres](https://github.com/streamingfast/substreams-sink-postgres)
+- [substreams-sink-mongodb](https://github.com/streamingfast/substreams-sink-mongodb)
 
-For Linux, using apt
+## Install    
+
 ```bash
-apt install -y protobuf-compiler
-protoc --version  # Ensure compiler version is 3+
+$ cargo add substreams-database-change
 ```
 
-For macOS, using Homebrew
-```bash
-brew install protobuf
-protoc --version  # Ensure compiler version is 3+
+## Quickstart
+
+**Cargo.toml**
+
+```toml
+[dependencies]
+substreams = "0.5"
+substreams-database-change = "1.0"
 ```
 
-Instead of having a `build.rs` file which will build the proto automatically on every `cargo build --release` you have to build the proto files manually.
+**src/lib.rs**
 
-Simply run `./gen/generate.sh`
+```rust
+use substreams::errors::Error;
+use substreams_database_change::pb::database::{DatabaseChanges, table_change::Operation};
+
+#[substreams::handlers::map]
+fn db_out(
+    ... some stores ...
+) -> Result<DatabaseChanges, Error> {
+    // Initialize Database Changes container
+    let mut database_changes: DatabaseChanges = Default::default();
+
+    // Push change
+    database_changes.push_change("transfer", "primary-key", 0, Operation::Create)
+        .change("key1", ("previous1", "value1"))
+        .change("key2", ("previous2", "value2"))
+
+    Ok(database_changes)
+}
+```
