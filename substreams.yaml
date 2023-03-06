@@ -1,7 +1,7 @@
 specVersion: v0.1.0
 package:
   name: substreams_database_change
-  version: v1.0.0
+  version: v1.0.1
   url: https://github.com/streamingfast/substreams-database-change
   doc: Substreams Database contains all the definitions for the database changes which can be emitted by a substream.
 
