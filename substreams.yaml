@@ -9,4 +9,4 @@ protobuf:
   files:
     - database.proto
   importPaths:
-    - ./proto/substreams/sink/database/v1
+    - ./proto/sf/substreams/sink/database/v1
