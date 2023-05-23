@@ -19,6 +19,18 @@ impl DatabaseChanges {
         self.table_changes.push(table_change);
         return self.table_changes.last_mut().unwrap();
     }
+
+    pub fn push_change_composite<T: AsRef<str>, K: AsRef<str>>(
+        &mut self,
+        table: T,
+        keys: HashMap<String, String>,
+        ordinal: u64,
+        operation: Operation,
+    ) -> &mut TableChange {
+        let table_change = TableChange::new_composite(table, keys, ordinal, operation);
+        self.table_changes.push(table_change);
+        return self.table_changes.last_mut().unwrap();
+    }
 }
 
 impl TableChange {
