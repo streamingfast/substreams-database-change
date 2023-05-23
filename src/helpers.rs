@@ -20,7 +20,7 @@ impl DatabaseChanges {
         return self.table_changes.last_mut().unwrap();
     }
 
-    pub fn push_change_composite<T: AsRef<str>, K: AsRef<str>>(
+    pub fn push_change_composite<T: AsRef<str>>(
         &mut self,
         table: T,
         keys: HashMap<String, String>,
