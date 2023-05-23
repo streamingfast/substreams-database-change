@@ -1,5 +1,11 @@
+use std::collections::HashMap;
+
 use crate::change::ToField;
-use crate::pb::database::{table_change::Operation, DatabaseChanges, TableChange};
+use crate::pb::sf::substreams::sink::database::v1::CompositePrimaryKey;
+use crate::pb::sf::substreams::sink::database::v1::{
+    table_change::{Operation, PrimaryKey},
+    DatabaseChanges, TableChange,
+};
 
 impl DatabaseChanges {
     pub fn push_change<T: AsRef<str>, K: AsRef<str>>(
@@ -24,7 +30,22 @@ impl TableChange {
     ) -> TableChange {
         TableChange {
             table: entity.as_ref().to_string(),
-            pk: pk.as_ref().to_string(),
+            primary_key: Some(PrimaryKey::Pk(pk.as_ref().to_string())),
+            ordinal,
+            operation: operation as i32,
+            fields: vec![],
+        }
+    }
+
+    pub fn new_composite<T: AsRef<str>>(
+        entity: T,
+        keys: HashMap<String, String>,
+        ordinal: u64,
+        operation: Operation,
+    ) -> TableChange {
+        TableChange {
+            table: entity.as_ref().to_string(),
+            primary_key: Some(PrimaryKey::CompositePk(CompositePrimaryKey { keys })),
             ordinal,
             operation: operation as i32,
             fields: vec![],
