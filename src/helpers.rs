@@ -1,10 +1,9 @@
 use std::collections::HashMap;
 
 use crate::change::ToField;
-use crate::pb::sf::substreams::sink::database::v1::CompositePrimaryKey;
-use crate::pb::sf::substreams::sink::database::v1::{
+use crate::pb::database::{
     table_change::{Operation, PrimaryKey},
-    DatabaseChanges, TableChange,
+    CompositePrimaryKey, DatabaseChanges, TableChange,
 };
 
 impl DatabaseChanges {

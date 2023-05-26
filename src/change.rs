@@ -1,4 +1,4 @@
-use crate::pb::sf::substreams::sink::database::v1::Field;
+use crate::pb::database::Field;
 use std::str;
 use substreams::pb::substreams::store_delta::Operation;
 use substreams::scalar::{BigDecimal, BigInt};
@@ -161,7 +161,7 @@ impl_to_field_from_delta_via_ref!(&DeltaString);
 #[cfg(test)]
 mod test {
     use crate::change::ToField;
-    use crate::pb::sf::substreams::sink::database::v1::Field;
+    use crate::pb::database::Field;
     use substreams::pb::substreams::store_delta::Operation;
     use substreams::scalar::{BigDecimal, BigInt};
     use substreams::store::{DeltaBigDecimal, DeltaBigInt, DeltaBool, DeltaBytes, DeltaString};
