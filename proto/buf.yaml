@@ -1,5 +1,5 @@
 version: v1
-name: buf.build/streamingfast/substreams-sink-database
+name: buf.build/streamingfast/substreams-sink-database-changes
 
 lint:
   use:

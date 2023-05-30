@@ -1,11 +1,11 @@
 # Substreams Database Change
 
-[<img alt="github" src="https://img.shields.io/badge/Github-substreams.database-8da0cb?style=for-the-badge&logo=github" height="20">](https://github.com/streamingfast/substreams-database-change)
-[<img alt="crates.io" src="https://img.shields.io/crates/v/substreams-database-change.svg?style=for-the-badge&color=fc8d62&logo=rust" height="20">](https://crates.io/crates/substreams-database-change)
-[<img alt="docs.rs" src="https://img.shields.io/badge/docs.rs-substreams.database-66c2a5?style=for-the-badge&labelColor=555555&logo=docs.rs" height="20">](https://docs.rs/substreams-database-change)
-[<img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/streamingfast/substreams-database-change/ci.yml?branch=develop&style=for-the-badge" height="20">](https://github.com/streamingfast/substreams-database-change/actions?query=branch%3Adevelop)
+[<img alt="github" src="https://img.shields.io/badge/Github-substreams.database-8da0cb?style=for-the-badge&logo=github" height="20">](https://github.com/streamingfast/substreams-sink-database-changes)
+[<img alt="crates.io" src="https://img.shields.io/crates/v/substreams-sink-database-changes.svg?style=for-the-badge&color=fc8d62&logo=rust" height="20">](https://crates.io/crates/substreams-sink-database-changes)
+[<img alt="docs.rs" src="https://img.shields.io/badge/docs.rs-substreams.database-66c2a5?style=for-the-badge&labelColor=555555&logo=docs.rs" height="20">](https://docs.rs/substreams-sink-database-changes)
+[<img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/streamingfast/substreams-sink-database-changes/ci.yml?branch=develop&style=for-the-badge" height="20">](https://github.com/streamingfast/substreams-sink-database-changes/actions?query=branch%3Adevelop)
 
-> `substreams-database-change` contains all the definitions for database changes which can be emitted by a substream.
+> `substreams-sink-database-changes` contains all the definitions for database changes which can be emitted by a substream.
 
 ## Used by
 
@@ -15,7 +15,7 @@
 ## Install    
 
 ```bash
-$ cargo add substreams-database-change
+$ cargo add substreams-sink-database-changes
 ```
 
 ## Quickstart
@@ -25,14 +25,14 @@ $ cargo add substreams-database-change
 ```toml
 [dependencies]
 substreams = "0.5"
-substreams-database-change = "1.0"
+substreams-sink-database-changes = "1.0"
 ```
 
 **src/lib.rs**
 
 ```rust
 use substreams::errors::Error;
-use substreams_database_change::pb::database::{DatabaseChanges, table_change::Operation};
+use substreams_sink_database_changes::pb::database::{DatabaseChanges, table_change::Operation};
 
 #[substreams::handlers::map]
 fn db_out(

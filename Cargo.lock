@@ -354,16 +354,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "substreams-database-change"
-version = "1.0.0"
-dependencies = [
- "base64",
- "prost",
- "prost-types",
- "substreams",
-]
-
-[[package]]
 name = "substreams-macro"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -373,6 +363,16 @@ dependencies = [
  "quote",
  "syn",
  "thiserror",
+]
+
+[[package]]
+name = "substreams-sink-database-changes"
+version = "1.0.0"
+dependencies = [
+ "base64",
+ "prost",
+ "prost-types",
+ "substreams",
 ]
 
 [[package]]
