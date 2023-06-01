@@ -1,5 +1,10 @@
+use std::collections::HashMap;
+
 use crate::change::ToField;
-use crate::pb::database::{table_change::Operation, DatabaseChanges, TableChange};
+use crate::pb::database::{
+    table_change::{Operation, PrimaryKey},
+    CompositePrimaryKey, DatabaseChanges, TableChange,
+};
 
 impl DatabaseChanges {
     pub fn push_change<T: AsRef<str>, K: AsRef<str>>(
@@ -10,6 +15,18 @@ impl DatabaseChanges {
         operation: Operation,
     ) -> &mut TableChange {
         let table_change = TableChange::new(table, pk, ordinal, operation);
+        self.table_changes.push(table_change);
+        return self.table_changes.last_mut().unwrap();
+    }
+
+    pub fn push_change_composite<T: AsRef<str>>(
+        &mut self,
+        table: T,
+        keys: HashMap<String, String>,
+        ordinal: u64,
+        operation: Operation,
+    ) -> &mut TableChange {
+        let table_change = TableChange::new_composite(table, keys, ordinal, operation);
         self.table_changes.push(table_change);
         return self.table_changes.last_mut().unwrap();
     }
@@ -24,7 +41,22 @@ impl TableChange {
     ) -> TableChange {
         TableChange {
             table: entity.as_ref().to_string(),
-            pk: pk.as_ref().to_string(),
+            primary_key: Some(PrimaryKey::Pk(pk.as_ref().to_string())),
+            ordinal,
+            operation: operation as i32,
+            fields: vec![],
+        }
+    }
+
+    pub fn new_composite<T: AsRef<str>>(
+        entity: T,
+        keys: HashMap<String, String>,
+        ordinal: u64,
+        operation: Operation,
+    ) -> TableChange {
+        TableChange {
+            table: entity.as_ref().to_string(),
+            primary_key: Some(PrimaryKey::CompositePk(CompositePrimaryKey { keys })),
             ordinal,
             operation: operation as i32,
             fields: vec![],

@@ -10,7 +10,10 @@ message DatabaseChanges {
 
 message TableChange {
   string table = 1;
-  string pk = 2;
+  oneof primary_key {
+    string pk = 2;
+    CompositePrimaryKey composite_pk = 6;
+  }
   uint64 ordinal = 3;
   enum Operation {
     UNSET = 0;    // Protobuf default should not be used, this is used so that the consume can ensure that the value was actually specified
@@ -20,6 +23,10 @@ message TableChange {
   }
   Operation operation = 4;
   repeated Field fields = 5;
+}
+
+message CompositePrimaryKey {
+  map<string, string> keys = 1;
 }
 
 message Field {
