@@ -1,4 +1,4 @@
-# Substreams Database Change
+# Substreams Sink Database Changes
 
 [<img alt="github" src="https://img.shields.io/badge/Github-substreams.database-8da0cb?style=for-the-badge&logo=github" height="20">](https://github.com/streamingfast/substreams-sink-database-changes)
 [<img alt="crates.io" src="https://img.shields.io/crates/v/substreams-sink-database-changes.svg?style=for-the-badge&color=fc8d62&logo=rust" height="20">](https://crates.io/crates/substreams-sink-database-changes)
