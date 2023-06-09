@@ -44,5 +44,5 @@ cargo check
 
 git add -A . && git commit -m "Preparing release of ${version}"
 
-sfreleaser release
+sfreleaser release v${version}
 ```
