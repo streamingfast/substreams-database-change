@@ -275,9 +275,6 @@ mod test {
             new_value: Vec::from("bytes2"),
         };
 
-        let value: Vec<u8> = vec![0x01, 0x02];
-        let field = (&value, &value).to_field("column");
-
         assert_eq!(
             create_expected_field(
                 FIELD_NAME,
