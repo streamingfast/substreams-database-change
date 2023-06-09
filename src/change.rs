@@ -60,13 +60,13 @@ impl<T: AsRef<[u8]>> AsString for &Hex<T> {
 
 impl AsString for Vec<u8> {
     fn as_string(self) -> String {
-        base64::encode(self)
+        Hex::encode(self)
     }
 }
 
 impl AsString for &Vec<u8> {
     fn as_string(self) -> String {
-        base64::encode(self)
+        Hex::encode(self)
     }
 }
 
@@ -260,7 +260,7 @@ mod test {
     fn bytes_change() {
         let bytes_change: (Option<Vec<u8>>, Vec<u8>) = (None, Vec::from("bytes"));
         assert_eq!(
-            create_expected_field(FIELD_NAME, None, Some("Ynl0ZXM=".to_string())),
+            create_expected_field(FIELD_NAME, None, Some("6279746573".to_string())),
             bytes_change.to_field(FIELD_NAME)
         );
     }
@@ -275,11 +275,14 @@ mod test {
             new_value: Vec::from("bytes2"),
         };
 
+        let value: Vec<u8> = vec![0x01, 0x02];
+        let field = (&value, &value).to_field("column");
+
         assert_eq!(
             create_expected_field(
                 FIELD_NAME,
-                Some("Ynl0ZXMx".to_string()),
-                Some("Ynl0ZXMy".to_string())
+                Some("627974657331".to_string()),
+                Some("627974657332".to_string())
             ),
             delta.to_field(FIELD_NAME)
         );

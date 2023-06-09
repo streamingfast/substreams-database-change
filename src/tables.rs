@@ -1,6 +1,9 @@
 use crate::pb::database::{table_change::Operation, DatabaseChanges, Field, TableChange};
 use std::collections::HashMap;
-use substreams::scalar::{BigDecimal, BigInt};
+use substreams::{
+    scalar::{BigDecimal, BigInt},
+    Hex,
+};
 
 #[derive(Debug)]
 pub struct Tables {
@@ -198,6 +201,7 @@ impl_to_database_value_proxy_to_string!(u64);
 impl_to_database_value_proxy_to_ref!(bool);
 impl_to_database_value_proxy_to_ref!(BigDecimal);
 impl_to_database_value_proxy_to_ref!(BigInt);
+impl_to_database_value_proxy_to_ref!(Vec<u8>);
 
 impl ToDatabaseValue for &bool {
     fn to_value(self) -> String {
@@ -226,5 +230,23 @@ impl ToDatabaseValue for &String {
 impl ToDatabaseValue for String {
     fn to_value(self) -> String {
         self
+    }
+}
+
+impl ToDatabaseValue for &Vec<u8> {
+    fn to_value(self) -> String {
+        Hex::encode(self)
+    }
+}
+
+impl<T: AsRef<[u8]>> ToDatabaseValue for Hex<T> {
+    fn to_value(self) -> String {
+        ToString::to_string(&self)
+    }
+}
+
+impl<T: AsRef<[u8]>> ToDatabaseValue for &Hex<T> {
+    fn to_value(self) -> String {
+        ToString::to_string(self)
     }
 }
