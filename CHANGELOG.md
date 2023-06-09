@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.2]
+
+* Added some missing conversion for `ToDatabaseValue` trait.
+
 ## [1.1.1]
 
 * Fixed encoding of `Vec<u8>` to be in `hex` format as expected by Postgres (and hopefully other database). This is technically a breaking change but it was probably never actually working, so we are changing. If you were relying on `base64` decoding, please let use know and we will find a solution.

@@ -197,29 +197,16 @@ impl_to_database_value_proxy_to_string!(u8);
 impl_to_database_value_proxy_to_string!(u16);
 impl_to_database_value_proxy_to_string!(u32);
 impl_to_database_value_proxy_to_string!(u64);
+impl_to_database_value_proxy_to_string!(bool);
+impl_to_database_value_proxy_to_string!(::prost_types::Timestamp);
+impl_to_database_value_proxy_to_string!(&::prost_types::Timestamp);
+impl_to_database_value_proxy_to_string!(&str);
+impl_to_database_value_proxy_to_string!(BigDecimal);
+impl_to_database_value_proxy_to_string!(&BigDecimal);
+impl_to_database_value_proxy_to_string!(BigInt);
+impl_to_database_value_proxy_to_string!(&BigInt);
 
-impl_to_database_value_proxy_to_ref!(bool);
-impl_to_database_value_proxy_to_ref!(BigDecimal);
-impl_to_database_value_proxy_to_ref!(BigInt);
 impl_to_database_value_proxy_to_ref!(Vec<u8>);
-
-impl ToDatabaseValue for &bool {
-    fn to_value(self) -> String {
-        (if *self == true { "true" } else { "false" }).to_string()
-    }
-}
-
-impl ToDatabaseValue for &BigDecimal {
-    fn to_value(self) -> String {
-        ToString::to_string(self)
-    }
-}
-
-impl ToDatabaseValue for &BigInt {
-    fn to_value(self) -> String {
-        ToString::to_string(self)
-    }
-}
 
 impl ToDatabaseValue for &String {
     fn to_value(self) -> String {
@@ -248,5 +235,21 @@ impl<T: AsRef<[u8]>> ToDatabaseValue for Hex<T> {
 impl<T: AsRef<[u8]>> ToDatabaseValue for &Hex<T> {
     fn to_value(self) -> String {
         ToString::to_string(self)
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use crate::tables::ToDatabaseValue;
+
+    #[test]
+    fn to_database_value_proto_timestamp() {
+        assert_eq!(
+            ToDatabaseValue::to_value(::prost_types::Timestamp {
+                seconds: 60 * 60 + 60 + 1,
+                nanos: 1
+            }),
+            "1970-01-01T01:01:01.000000001Z"
+        );
     }
 }
