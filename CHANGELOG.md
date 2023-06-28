@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0]
+
+* **Breaking** Renamed `substreams_database_change::pb::database::table_change::Operation::Unset` to be become `...::Operation::Unspecified` to make the Protobuf conforms to buf lint rules.
+
+  We take the liberty to change it because we expect that almost everyone is using the abstraction provided by this library.
+
 ## [1.1.3]
 
 * Removed some useless dependencies.

@@ -25,7 +25,7 @@ impl Tables {
             .entry(key.as_ref().to_string())
             .or_insert(Row::new());
         match row.operation {
-            Operation::Unset => {
+            Operation::Unspecified => {
                 row.operation = Operation::Create;
             }
             Operation::Create => {}
@@ -50,7 +50,7 @@ impl Tables {
             .entry(key.as_ref().to_string())
             .or_insert(Row::new());
         match row.operation {
-            Operation::Unset => {
+            Operation::Unspecified => {
                 row.operation = Operation::Update;
             }
             Operation::Create => {}
@@ -73,12 +73,12 @@ impl Tables {
             .entry(key.as_ref().to_string())
             .or_insert(Row::new());
         match row.operation {
-            Operation::Unset => {
+            Operation::Unspecified => {
                 row.operation = Operation::Delete;
             }
             Operation::Create => {
                 // simply clear the thing
-                row.operation = Operation::Unset;
+                row.operation = Operation::Unspecified;
                 row.columns = HashMap::new();
             }
             Operation::Update => {
@@ -97,7 +97,7 @@ impl Tables {
 
         for (table, rows) in self.tables.into_iter() {
             for (pk, row) in rows.pks.into_iter() {
-                if row.operation == Operation::Unset {
+                if row.operation == Operation::Unspecified {
                     continue;
                 }
 
@@ -145,7 +145,7 @@ pub struct Row {
 impl Row {
     pub fn new() -> Self {
         Row {
-            operation: Operation::Unset,
+            operation: Operation::Unspecified,
             columns: HashMap::new(),
             finalized: false,
         }

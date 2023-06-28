@@ -16,10 +16,10 @@ message TableChange {
   }
   uint64 ordinal = 3;
   enum Operation {
-    UNSET = 0;    // Protobuf default should not be used, this is used so that the consume can ensure that the value was actually specified
-    CREATE = 1;
-    UPDATE = 2;
-    DELETE = 3;
+    OPERATION_UNSPECIFIED = 0;    // Protobuf default should not be used, this is used so that the consume can ensure that the value was actually specified
+    OPERATION_CREATE = 1;
+    OPERATION_UPDATE = 2;
+    OPERATION_DELETE = 3;
   }
   Operation operation = 4;
   repeated Field fields = 5;
