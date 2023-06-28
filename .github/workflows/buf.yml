@@ -31,14 +31,14 @@ jobs:
         uses: bufbuild/buf-breaking-action@v1
         with:
           input: proto
-          against: 'https://github.com/${{ github.repository }}.git#branch=${{ github.event.before }}'
+          against: 'https://github.com/${{ github.repository }}.git#branch=${{ github.event.before }},subdir=proto'
 
       - name: Check for breaking changes (PR)
         if: github.event_name == 'pull_request'
         uses: bufbuild/buf-breaking-action@v1
         with:
           input: proto
-          against: 'https://github.com/${{ github.repository }}.git#branch=${{ github.base_ref }}'
+          against: 'https://github.com/${{ github.repository }}.git#branch=${{ github.base_ref }},subdir=proto'
 
       - uses: bufbuild/buf-push-action@v1
         if: github.event_name != 'pull_request'
