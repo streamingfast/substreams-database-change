@@ -1,12 +1,12 @@
 specVersion: v0.1.0
 package:
   name: substreams_sink_database_changes
-  version: v1.1.3
+  version: v1.2.1
   url: https://github.com/streamingfast/substreams-sink-database-changes
   doc: Contains all the definitions for the database changes which can be emitted by a Substreams.
 
 protobuf:
   files:
-    - database.proto
+    - sf/substreams/sink/database/v1/database.proto
   importPaths:
-    - ./proto/sf/substreams/sink/database/v1
+    - ./proto
