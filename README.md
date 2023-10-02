@@ -45,7 +45,7 @@ fn db_out(
     // Push change
     database_changes.push_change("transfer", "primary-key", 0, Operation::Create)
         .change("key1", ("previous1", "value1"))
-        .change("key2", ("previous2", "value2"))
+        .change("key2", ("previous2", "value2"));
 
     Ok(database_changes)
 }
