@@ -18,10 +18,11 @@ impl Tables {
         }
     }
 
-    pub fn create_row(&mut self, table: &str, key: PrimaryKey) -> &mut Row {
+    pub fn create_row<K: Into<PrimaryKey>>(&mut self, table: &str, key: K) -> &mut Row {
         let rows = self.tables.entry(table.to_string()).or_insert(Rows::new());
-        let key_debug = format!("{:?}", key);
-        let row = rows.pks.entry(key).or_insert(Row::new());
+        let k = key.into();
+        let key_debug = format!("{:?}", k);
+        let row = rows.pks.entry(k).or_insert(Row::new());
         match row.operation {
             Operation::Unspecified => {
                 row.operation = Operation::Create;
@@ -40,10 +41,11 @@ impl Tables {
         row
     }
 
-    pub fn update_row(&mut self, table: &str, key: PrimaryKey) -> &mut Row {
+    pub fn update_row<K: Into<PrimaryKey>>(&mut self, table: &str, key: K) -> &mut Row {
         let rows = self.tables.entry(table.to_string()).or_insert(Rows::new());
-        let key_debug = format!("{:?}", key);
-        let row = rows.pks.entry(key).or_insert(Row::new());
+        let k = key.into();
+        let key_debug = format!("{:?}", k);
+        let row = rows.pks.entry(k).or_insert(Row::new());
         match row.operation {
             Operation::Unspecified => {
                 row.operation = Operation::Update;
@@ -60,9 +62,9 @@ impl Tables {
         row
     }
 
-    pub fn delete_row(&mut self, table: &str, key: PrimaryKey) -> &mut Row {
+    pub fn delete_row<K: Into<PrimaryKey>>(&mut self, table: &str, key: PrimaryKey) -> &mut Row {
         let rows = self.tables.entry(table.to_string()).or_insert(Rows::new());
-        let row = rows.pks.entry(key).or_insert(Row::new());
+        let row = rows.pks.entry(key.into()).or_insert(Row::new());
         match row.operation {
             Operation::Unspecified => {
                 row.operation = Operation::Delete;
@@ -130,6 +132,12 @@ impl From<&str> for PrimaryKey {
     }
 }
 
+impl From<&String> for PrimaryKey {
+    fn from(x: &String) -> Self {
+        Self::Single(x.clone())
+    }
+}
+
 impl From<String> for PrimaryKey {
     fn from(x: String) -> Self {
         Self::Single(x)
@@ -150,7 +158,7 @@ impl<K: AsRef<str>, const N: usize> From<[(K, String); N]> for PrimaryKey {
 #[derive(Debug)]
 pub struct Rows {
     // Map of primary keys within this table, to the fields within
-    pub pks: HashMap<PrimaryKey, Row>,
+    pks: HashMap<PrimaryKey, Row>,
 }
 
 impl Rows {
@@ -272,6 +280,7 @@ mod test {
     use crate::pb::database::table_change::PrimaryKey;
     use crate::pb::database::CompositePrimaryKey;
     use crate::pb::database::{DatabaseChanges, TableChange};
+    use crate::tables::PrimaryKey as TablesPrimaryKey;
     use crate::tables::Tables;
     use crate::tables::ToDatabaseValue;
     use std::collections::HashMap;
@@ -288,9 +297,29 @@ mod test {
     }
 
     #[test]
+    fn create_row_single_pk_direct() {
+        let mut tables = Tables::new();
+        tables.create_row("myevent", TablesPrimaryKey::Single("myhash".to_string()));
+
+        assert_eq!(
+            tables.to_database_changes(),
+            DatabaseChanges {
+                table_changes: [TableChange {
+                    table: "myevent".to_string(),
+                    ordinal: 0,
+                    operation: 1,
+                    fields: [].into(),
+                    primary_key: Some(PrimaryKey::Pk("myhash".to_string())),
+                }]
+                .to_vec(),
+            }
+        );
+    }
+
+    #[test]
     fn create_row_single_pk() {
         let mut tables = Tables::new();
-        tables.create_row("myevent", "myhash".into());
+        tables.create_row("myevent", "myhash");
 
         assert_eq!(
             tables.to_database_changes(),
@@ -315,8 +344,7 @@ mod test {
             [
                 ("evt_tx_hash", "hello".to_string()),
                 ("evt_index", "world".to_string()),
-            ]
-            .into(),
+            ],
         );
 
         assert_eq!(
