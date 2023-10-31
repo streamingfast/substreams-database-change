@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0]
+
+Better support for using composite primary keys:
+
+* New enum in this crate: `tables::PrimaryKey`
+    * `Single(String)`: `let single: PrimaryKey = "hello world".into()`
+    * `Composite(BTreeMap<String, String>)`: `let composite: PrimaryKey = [("evt_tx_hash","hello".to_string()),("evt_index","world".to_string())].into()`
+
+Breaking changes:
+
+* The `Rows.pks` field is not public anymore.
+* `create_row()`, `update_row()` and `delete_row()` now require a `PrimaryKey` instead of a `String`. This should work directly with a `String`, `&String` or `&str`.
+
 ## [1.2.1]
 
 * Changed imports in `substreams.yaml` definition so that packaged `.spkg` can you the expect path `sf/substreams/sink/database/v1` to exclude and generating from the `.spkg` will generate data on the right path.

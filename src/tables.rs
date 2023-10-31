@@ -1,5 +1,5 @@
 use crate::pb::database::{table_change::Operation, DatabaseChanges, Field, TableChange};
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 use substreams::{
     scalar::{BigDecimal, BigInt},
     Hex,
@@ -18,12 +18,11 @@ impl Tables {
         }
     }
 
-    pub fn create_row<K: AsRef<str>>(&mut self, table: &str, key: K) -> &mut Row {
+    pub fn create_row<K: Into<PrimaryKey>>(&mut self, table: &str, key: K) -> &mut Row {
         let rows = self.tables.entry(table.to_string()).or_insert(Rows::new());
-        let row = rows
-            .pks
-            .entry(key.as_ref().to_string())
-            .or_insert(Row::new());
+        let k = key.into();
+        let key_debug = format!("{:?}", k);
+        let row = rows.pks.entry(k).or_insert(Row::new());
         match row.operation {
             Operation::Unspecified => {
                 row.operation = Operation::Create;
@@ -35,20 +34,18 @@ impl Tables {
             Operation::Delete => {
                 panic!(
                     "cannot create a row after a scheduled delete operation - table: {} key: {}",
-                    table,
-                    key.as_ref().to_string()
+                    table, key_debug,
                 )
             }
         }
         row
     }
 
-    pub fn update_row<K: AsRef<str>>(&mut self, table: &str, key: K) -> &mut Row {
+    pub fn update_row<K: Into<PrimaryKey>>(&mut self, table: &str, key: K) -> &mut Row {
         let rows = self.tables.entry(table.to_string()).or_insert(Rows::new());
-        let row = rows
-            .pks
-            .entry(key.as_ref().to_string())
-            .or_insert(Row::new());
+        let k = key.into();
+        let key_debug = format!("{:?}", k);
+        let row = rows.pks.entry(k).or_insert(Row::new());
         match row.operation {
             Operation::Unspecified => {
                 row.operation = Operation::Update;
@@ -58,20 +55,16 @@ impl Tables {
             Operation::Delete => {
                 panic!(
                     "cannot update a row after a scheduled delete operation - table: {} key: {}",
-                    table,
-                    key.as_ref().to_string()
+                    table, key_debug,
                 )
             }
         }
         row
     }
 
-    pub fn delete_row<K: AsRef<str>>(&mut self, table: &str, key: K) -> &mut Row {
+    pub fn delete_row<K: Into<PrimaryKey>>(&mut self, table: &str, key: PrimaryKey) -> &mut Row {
         let rows = self.tables.entry(table.to_string()).or_insert(Rows::new());
-        let row = rows
-            .pks
-            .entry(key.as_ref().to_string())
-            .or_insert(Row::new());
+        let row = rows.pks.entry(key.into()).or_insert(Row::new());
         match row.operation {
             Operation::Unspecified => {
                 row.operation = Operation::Delete;
@@ -101,7 +94,16 @@ impl Tables {
                     continue;
                 }
 
-                let mut change = TableChange::new(table.clone(), pk, 0, row.operation);
+                let mut change = match pk {
+                    PrimaryKey::Single(pk) => TableChange::new(table.clone(), pk, 0, row.operation),
+                    PrimaryKey::Composite(keys) => TableChange::new_composite(
+                        table.clone(),
+                        keys.into_iter().collect(),
+                        0,
+                        row.operation,
+                    ),
+                };
+
                 for (field, value) in row.columns.into_iter() {
                     change.fields.push(Field {
                         name: field,
@@ -118,10 +120,45 @@ impl Tables {
     }
 }
 
+#[derive(Hash, Debug, Eq, PartialEq)]
+pub enum PrimaryKey {
+    Single(String),
+    Composite(BTreeMap<String, String>),
+}
+
+impl From<&str> for PrimaryKey {
+    fn from(x: &str) -> Self {
+        Self::Single(x.to_string())
+    }
+}
+
+impl From<&String> for PrimaryKey {
+    fn from(x: &String) -> Self {
+        Self::Single(x.clone())
+    }
+}
+
+impl From<String> for PrimaryKey {
+    fn from(x: String) -> Self {
+        Self::Single(x)
+    }
+}
+
+impl<K: AsRef<str>, const N: usize> From<[(K, String); N]> for PrimaryKey {
+    fn from(arr: [(K, String); N]) -> Self {
+        if N == 0 {
+            return Self::Composite(BTreeMap::new());
+        }
+
+        let string_arr = arr.map(|(k, v)| (k.as_ref().to_string(), v));
+        Self::Composite(BTreeMap::from(string_arr))
+    }
+}
+
 #[derive(Debug)]
 pub struct Rows {
     // Map of primary keys within this table, to the fields within
-    pub pks: HashMap<String, Row>,
+    pks: HashMap<PrimaryKey, Row>,
 }
 
 impl Rows {
@@ -240,7 +277,13 @@ impl<T: AsRef<[u8]>> ToDatabaseValue for &Hex<T> {
 
 #[cfg(test)]
 mod test {
+    use crate::pb::database::table_change::PrimaryKey;
+    use crate::pb::database::CompositePrimaryKey;
+    use crate::pb::database::{DatabaseChanges, TableChange};
+    use crate::tables::PrimaryKey as TablesPrimaryKey;
+    use crate::tables::Tables;
     use crate::tables::ToDatabaseValue;
+    use std::collections::HashMap;
 
     #[test]
     fn to_database_value_proto_timestamp() {
@@ -250,6 +293,77 @@ mod test {
                 nanos: 1
             }),
             "1970-01-01T01:01:01.000000001Z"
+        );
+    }
+
+    #[test]
+    fn create_row_single_pk_direct() {
+        let mut tables = Tables::new();
+        tables.create_row("myevent", TablesPrimaryKey::Single("myhash".to_string()));
+
+        assert_eq!(
+            tables.to_database_changes(),
+            DatabaseChanges {
+                table_changes: [TableChange {
+                    table: "myevent".to_string(),
+                    ordinal: 0,
+                    operation: 1,
+                    fields: [].into(),
+                    primary_key: Some(PrimaryKey::Pk("myhash".to_string())),
+                }]
+                .to_vec(),
+            }
+        );
+    }
+
+    #[test]
+    fn create_row_single_pk() {
+        let mut tables = Tables::new();
+        tables.create_row("myevent", "myhash");
+
+        assert_eq!(
+            tables.to_database_changes(),
+            DatabaseChanges {
+                table_changes: [TableChange {
+                    table: "myevent".to_string(),
+                    ordinal: 0,
+                    operation: 1,
+                    fields: [].into(),
+                    primary_key: Some(PrimaryKey::Pk("myhash".to_string())),
+                }]
+                .to_vec(),
+            }
+        );
+    }
+
+    #[test]
+    fn create_row_composite_pk() {
+        let mut tables = Tables::new();
+        tables.create_row(
+            "myevent",
+            [
+                ("evt_tx_hash", "hello".to_string()),
+                ("evt_index", "world".to_string()),
+            ],
+        );
+
+        assert_eq!(
+            tables.to_database_changes(),
+            DatabaseChanges {
+                table_changes: [TableChange {
+                    table: "myevent".to_string(),
+                    ordinal: 0,
+                    operation: 1,
+                    fields: [].into(),
+                    primary_key: Some(PrimaryKey::CompositePk(CompositePrimaryKey {
+                        keys: HashMap::from([
+                            ("evt_tx_hash".to_string(), "hello".to_string()),
+                            ("evt_index".to_string(), "world".to_string())
+                        ])
+                    }))
+                }]
+                .to_vec(),
+            }
         );
     }
 }
