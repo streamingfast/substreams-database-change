@@ -1,5 +1,5 @@
 use crate::pb::database::{table_change::Operation, DatabaseChanges, Field, TableChange};
-use std::collections::HashMap;
+use std::collections::{BTreeMap, HashMap};
 use substreams::{
     scalar::{BigDecimal, BigInt},
     Hex,
@@ -22,7 +22,7 @@ impl Tables {
         let rows = self.tables.entry(table.to_string()).or_insert(Rows::new());
         let row = rows
             .pks
-            .entry(key.as_ref().to_string())
+            .entry(PrimaryKey::Single(key.as_ref().to_string()))
             .or_insert(Row::new());
         match row.operation {
             Operation::Unspecified => {
@@ -47,7 +47,7 @@ impl Tables {
         let rows = self.tables.entry(table.to_string()).or_insert(Rows::new());
         let row = rows
             .pks
-            .entry(key.as_ref().to_string())
+            .entry(PrimaryKey::Single(key.as_ref().to_string()))
             .or_insert(Row::new());
         match row.operation {
             Operation::Unspecified => {
@@ -70,7 +70,7 @@ impl Tables {
         let rows = self.tables.entry(table.to_string()).or_insert(Rows::new());
         let row = rows
             .pks
-            .entry(key.as_ref().to_string())
+            .entry(PrimaryKey::Single(key.as_ref().to_string()))
             .or_insert(Row::new());
         match row.operation {
             Operation::Unspecified => {
@@ -101,7 +101,16 @@ impl Tables {
                     continue;
                 }
 
-                let mut change = TableChange::new(table.clone(), pk, 0, row.operation);
+                let mut change = match pk {
+                    PrimaryKey::Single(pk) => TableChange::new(table.clone(), pk, 0, row.operation),
+                    PrimaryKey::Composite(keys) => TableChange::new_composite(
+                        table.clone(),
+                        keys.into_iter().collect(),
+                        0,
+                        row.operation,
+                    ),
+                };
+
                 for (field, value) in row.columns.into_iter() {
                     change.fields.push(Field {
                         name: field,
@@ -118,10 +127,16 @@ impl Tables {
     }
 }
 
+#[derive(Hash, Debug, Eq, PartialEq)]
+pub enum PrimaryKey {
+    Single(String),
+    Composite(BTreeMap<String, String>),
+}
+
 #[derive(Debug)]
 pub struct Rows {
     // Map of primary keys within this table, to the fields within
-    pub pks: HashMap<String, Row>,
+    pub pks: HashMap<PrimaryKey, Row>,
 }
 
 impl Rows {
