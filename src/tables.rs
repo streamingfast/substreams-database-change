@@ -200,6 +200,50 @@ impl Row {
         self.columns.insert(name.to_string(), value);
         self
     }
+
+    /// Set a field to an array of values compatible with PostgresSQL database,
+    /// this method is currently experimental and hidden as we plan to support
+    /// array natively in the model.
+    ///
+    /// For now, this method should be used with great care as it ties the model
+    /// to the database implementation.
+    #[doc(hidden)]
+    pub fn set_psql_array<T: ToDatabaseValue>(&mut self, name: &str, value: Vec<T>) -> &mut Row {
+        if self.operation == Operation::Delete {
+            panic!("cannot set fields on a delete operation")
+        }
+
+        let values = value
+            .into_iter()
+            .map(|x| x.to_value())
+            .collect::<Vec<_>>()
+            .join(",");
+
+        self.columns.insert(name.to_string(), format!("'{{{}}}'", values));
+        self
+    }
+
+    /// Set a field to an array of values compatible with Clickhouse database,
+    /// this method is currently experimental and hidden as we plan to support
+    /// array natively in the model.
+    ///
+    /// For now, this method should be used with great care as it ties the model
+    /// to the database implementation.
+    #[doc(hidden)]
+    pub fn set_clickhouse_array<T: ToDatabaseValue>(&mut self, name: &str, value: Vec<T>) -> &mut Row {
+        if self.operation == Operation::Delete {
+            panic!("cannot set fields on a delete operation")
+        }
+
+        let values = value
+            .into_iter()
+            .map(|x| x.to_value())
+            .collect::<Vec<_>>()
+            .join(",");
+
+        self.columns.insert(name.to_string(), format!("[{}]", values));
+        self
+    }
 }
 
 macro_rules! impl_to_database_value_proxy_to_ref {
