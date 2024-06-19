@@ -18,6 +18,21 @@ impl Tables {
         }
     }
 
+    /// Create a new row in the table with the given primary key.
+    ///
+    /// ```
+    /// // With a Primary Key of type `Single`
+    /// use crate::substreams_database_change::tables::Tables;
+    /// let mut tables = Tables::new();
+    /// tables.create_row("myevent", "my_key",);
+    /// ```
+    ///
+    /// ```
+    /// // With a Primary Key of type `Composite`
+    /// use crate::substreams_database_change::tables::Tables;
+    /// let mut tables = Tables::new();
+    /// tables.create_row("myevent", [("evt_tx_hash", String::from("hello")), ("evt_index", String::from("world"))]);
+    /// ```
     pub fn create_row<K: Into<PrimaryKey>>(&mut self, table: &str, key: K) -> &mut Row {
         let rows = self.tables.entry(table.to_string()).or_insert(Rows::new());
         let k = key.into();
@@ -219,7 +234,8 @@ impl Row {
             .collect::<Vec<_>>()
             .join(",");
 
-        self.columns.insert(name.to_string(), format!("'{{{}}}'", values));
+        self.columns
+            .insert(name.to_string(), format!("'{{{}}}'", values));
         self
     }
 
@@ -230,7 +246,11 @@ impl Row {
     /// For now, this method should be used with great care as it ties the model
     /// to the database implementation.
     #[doc(hidden)]
-    pub fn set_clickhouse_array<T: ToDatabaseValue>(&mut self, name: &str, value: Vec<T>) -> &mut Row {
+    pub fn set_clickhouse_array<T: ToDatabaseValue>(
+        &mut self,
+        name: &str,
+        value: Vec<T>,
+    ) -> &mut Row {
         if self.operation == Operation::Delete {
             panic!("cannot set fields on a delete operation")
         }
@@ -241,7 +261,8 @@ impl Row {
             .collect::<Vec<_>>()
             .join(",");
 
-        self.columns.insert(name.to_string(), format!("[{}]", values));
+        self.columns
+            .insert(name.to_string(), format!("[{}]", values));
         self
     }
 }
