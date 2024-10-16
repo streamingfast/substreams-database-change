@@ -1,6 +1,6 @@
 [package]
 name = "substreams-database-change"
-version = "1.3.1"
+version = "2.0.0"
 edition = "2021"
 description = "Substreams database change containg helpers"
 authors = ["StreamingFast Contributors <team@streamingfast.io>"]
@@ -10,9 +10,8 @@ repository = "https://github.com/streamingfast/substreams-sink-database-changes"
 readme = "README.md"
 keywords = [ "substreams", "streamingfast", "firehose", "thegraph", "entity"]
 categories = ["api-bindings", "external-ffi-bindings", "wasm"]
-rust-version = "1.60"
 
 [dependencies]
-prost = "0.11"
-prost-types = "0.11"
-substreams = "0.5"
+prost = "0.13"
+prost-types = "0.13"
+substreams = "0.6"
